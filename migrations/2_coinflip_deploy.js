@@ -11,6 +11,5 @@ module.exports = function(deployer) {
           console.log("Contract has been funded!");
         });
     });
-
   });
 };
