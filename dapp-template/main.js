@@ -3,9 +3,69 @@ var contractInstance;
 
 $(document).ready(function() {
     window.ethereum.enable().then(function(accounts){
-      contractInstance = new web3.eth.Contract(abi,  "0xB819Bd17bFf8211e14D99a9aF4044b8f669EBa0F", {from: accounts[0]});
+      contractInstance = new web3.eth.Contract(abi, "0x180B666b06544E88B4Bb7cA7b09ca6aaCB8C3534", {from: accounts[0]});
       console.log(contractInstance);
     });
 
-
 });
+
+
+function guess(guess, value){
+
+var guess = guess;
+
+let isnum = /^\d+$/.test(value);
+
+if(!isnum || value == 0){
+alert("Your input is invalid please enter a valid number");
+} else {
+
+var config = {
+value: web3.utils.toWei(value, "ether")
+}
+
+$("#guess_0_btn").disabled = true;
+$("#guess_1_btn").disabled = true;
+
+contractInstance.methods.guess(guess).send(config)
+.on("transactionHash", function(hash){
+  console.log(hash);
+})
+.on("confirmation", function(confirmationNr){
+  console.log(confirmationNr);
+})
+.on("receipt", function(receipt){
+  console.log(receipt);
+})
+.then(function(){
+
+
+  fetchOutcome(guess);
+
+}).catch((error) =>{
+      console.log(error);
+
+
+})
+}
+}
+
+
+async function fetchOutcome(guess){
+  await contractInstance.methods.outcome.call().call().then(function(res) {
+
+    if(guess == res){
+      console.log("Outcome is " + res + " You win!");
+        $("#outcome_display").text("You WIN!");
+    } else {
+        console.log("Outcome is " + res + " You lose!");
+        $("#outcome_display").text("You LOSE!");
+    }
+
+    $("#guess_0_btn").disabled = false;
+    $("#guess_1_btn").disabled = false;
+  }).catch((error) =>{
+        console.log(error);
+  })
+
+}
