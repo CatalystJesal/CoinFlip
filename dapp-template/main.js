@@ -3,7 +3,7 @@ var contractInstance;
 
 $(document).ready(function() {
     window.ethereum.enable().then(function(accounts){
-      contractInstance = new web3.eth.Contract(abi, "0x180B666b06544E88B4Bb7cA7b09ca6aaCB8C3534", {from: accounts[0]});
+      contractInstance = new web3.eth.Contract(abi, "0xDE4c9D58Fb3c339044696F6C2b14d5a69eE22fe9", {from: accounts[0]});
       console.log(contractInstance);
     });
 
@@ -12,16 +12,18 @@ $(document).ready(function() {
 
 function guess(guess, value){
 
+var valueTrim = value.trim()
 var guess = guess;
 
-let isnum = /^\d+$/.test(value);
 
-if(!isnum || value == 0){
+let isnum = /^\d+$/.test(valueTrim);
+
+if(!isnum || valueTrim == 0){
 alert("Your input is invalid please enter a valid number");
 } else {
 
 var config = {
-value: web3.utils.toWei(value, "ether")
+value: web3.utils.toWei(valueTrim, "ether")
 }
 
 $("#guess_0_btn").disabled = true;
