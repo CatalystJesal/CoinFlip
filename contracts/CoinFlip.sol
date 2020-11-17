@@ -21,6 +21,7 @@ uint wins;
 uint loss;
 uint latestGuess;
 uint outcome;
+bool isWaiting;
 }
 
 uint256 constant NUM_RANDOM_BYTES_REQUESTED = 1;
@@ -37,7 +38,6 @@ mapping (bytes32 => Bet) private waiting;
 
 event playersOutcome(uint value, string outcome);
 event LogNewProvableQuery(string description);
-event generatedRandomNumber(uint256 randomNumber);
 event playerStats(uint winnings, uint wins, uint loss);
 
  modifier minimumCost(uint cost) {
@@ -74,6 +74,8 @@ function getPlayer() public view returns(uint, uint, uint, uint, uint){
             /* emit generatedRandomNumber(players[waiting[_queryId].player].outcome); */
 
             delete waiting[_queryId];
+
+
 
       }
 }
@@ -127,6 +129,7 @@ function update(uint guess) payable public
 function flip(uint guess) public payable minimumCost(spend) {
     require(guess == 0 || guess == 1, "please pick a a whole number between 0 and 1");
     require(balance > 0, "contract is empty. Please wait for the contract owner to provide liquidity");
+    require(!players[msg.sender].isWaiting, "please wait until your current session is complete");
 
     balance = balance.add(msg.value);
 
