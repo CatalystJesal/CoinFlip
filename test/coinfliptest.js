@@ -54,13 +54,13 @@ it("should ensure outcome of the flip is either 0 or 1", async function(){
   assert(outcome == 0 || outcome == 1, "outcome is not 0 or 1");
 });
 
-it("should allow user to withdraw all their winnings if winnings > 0, user winnings should go to 0 after withdrawal", async function(){
-  let winnings = await instance.getPlayer.call().then(function(rest){res[0]});
+it("should allow user to withdraw all their earnings if earnings > 0, user earnings should go to 0 after withdrawal", async function(){
+  let earnings = await instance.getPlayer.call().then(function(rest){res[0]});
 
-  if(winnings > 0){
-    await instance.withdraw_Winnings({from: accounts[0]});
-    winnings = await instance.getPlayer.call().then(function(rest){res[0]});
-    assert(winnings == 0, "winnings didn't reset to 0. withdrawal unsuccessful")
+  if(earnings > 0){
+    await instance.withdraw_earnings({from: accounts[0]});
+    earnings = await instance.getPlayer.call().then(function(rest){res[0]});
+    assert(earnings == 0, "earnings didn't reset to 0. withdrawal unsuccessful")
   }
 });
 
