@@ -1,9 +1,28 @@
-var abi =  [
+var abi = [
   {
     "inputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "outcome",
+        "type": "uint256"
+      }
+    ],
+    "name": "FlipOutcome",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -16,38 +35,6 @@ var abi =  [
       }
     ],
     "name": "LogNewProvableQuery",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "randomNumber",
-        "type": "uint256"
-      }
-    ],
-    "name": "generatedRandomNumber",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "outcome",
-        "type": "string"
-      }
-    ],
-    "name": "playersOutcome",
     "type": "event"
   },
   {
@@ -77,12 +64,37 @@ var abi =  [
   {
     "constant": true,
     "inputs": [],
-    "name": "outcome",
+    "name": "getPlayer",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "payable": false,
@@ -136,41 +148,41 @@ var abi =  [
   },
   {
     "constant": false,
-    "inputs": [],
-    "name": "update",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "guess",
+        "type": "uint256"
+      }
+    ],
+    "name": "flip",
     "outputs": [],
     "payable": true,
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "testRandom",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": false,
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "number",
-        "type": "uint256"
+        "internalType": "bytes32",
+        "name": "_queryId",
+        "type": "bytes32"
       }
     ],
-    "name": "guess",
+    "name": "finaliseOutcome",
     "outputs": [],
     "payable": true,
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "withdraw_earnings",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

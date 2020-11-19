@@ -30,16 +30,12 @@ uint private spend = 0.1 ether;
 
 uint public balance;
 
-string public outcomeMessage;
-
 mapping (address => Player) private players;
 mapping (bytes32 => Bet) private waiting;
 
 
-event playersOutcome(uint value, string outcome);
+event FlipOutcome(address player, uint outcome);
 event LogNewProvableQuery(string description);
-event playerStats(uint earnings, uint wins, uint loss);
-event generatedRandomNumber(uint256 randomNumber);
 
  modifier minimumCost(uint cost) {
      require(msg.value >= spend, "Must send at least 0.1 ether to the contract");
@@ -67,18 +63,25 @@ function getPlayer() public view returns(uint, uint, uint, uint, uint, bool){
             players[waiting[_queryId].player].outcome = uint256(keccak256(abi.encodePacked(_result))) % 2;
 
 
-            //FOR TESTING ONLY
-            emit generatedRandomNumber(players[waiting[_queryId].player].outcome);
+            finaliseOutcome(_queryId);
 
-            finaliseOutcome(waiting[_queryId].player, waiting[_queryId].value);
+            emit FlipOutcome(waiting[_queryId].player, players[waiting[_queryId].player].outcome);
 
             delete waiting[_queryId];
 
       }
 }
 
-function update(uint guess) payable public
+function flip(uint guess) public payable minimumCost(spend)
 {
+  require(guess == 0 || guess == 1, "please pick a a whole number between 0 and 1");
+  require(balance > 0, "contract is empty. Please wait for the contract owner to provide liquidity");
+  require(players[msg.sender].isWaiting == false, "please wait until your current session is complete");
+
+
+  players[msg.sender].latestGuess = guess;
+  balance = balance.add(msg.value);
+
   uint256 QUERY_EXECUTION_DELAY = 0; // NOTE: The datasource currently does not support delays > 0!
   uint256 GAS_FOR_CALLBACK = 300000;
 
@@ -89,39 +92,26 @@ function update(uint guess) payable public
       GAS_FOR_CALLBACK
   );
 
-
   Bet memory b;
 
   b.player = msg.sender;
   b.value = msg.value;
   waiting[queryId] = b;
-
-  players[msg.sender].latestGuess = guess;
-
+  players[msg.sender].isWaiting = true;
 
   emit LogNewProvableQuery("Provable query was sent, standing by for the answer...");
 
 }
 
 
-function flip(uint guess) public payable minimumCost(spend) {
-    require(guess == 0 || guess == 1, "please pick a a whole number between 0 and 1");
-    require(balance > 0, "contract is empty. Please wait for the contract owner to provide liquidity");
-    require(players[msg.sender].isWaiting == false, "please wait until your current session is complete");
+function finaliseOutcome(bytes32 _queryId) public payable {
+  require(players[waiting[_queryId].player].outcome == 0 || players[waiting[_queryId].player].outcome == 1);
 
-    players[msg.sender].isWaiting = true;
-    balance = balance.add(msg.value);
-    update(guess);
+  uint expected = players[waiting[_queryId].player].latestGuess;
+  uint result = players[waiting[_queryId].player].outcome;
 
-
-}
-
-
-function finaliseOutcome(address sender,uint cost) public payable {
-  require(players[sender].outcome == 0 || players[sender].outcome == 1);
-
-  uint expected = players[sender].latestGuess;
-  uint result = players[sender].outcome;
+  address sender = waiting[_queryId].player;
+  uint cost = waiting[_queryId].value;
 
   if(expected == result){
      uint won = cost.mul(2);
@@ -131,9 +121,6 @@ function finaliseOutcome(address sender,uint cost) public payable {
 
       assert(expected == result);
 
-      outcomeMessage = "Congratulations! You have doubled your stake!";
-      emit playersOutcome(won, "Congratulations! You have doubled your stake!");
-
 
   } else if(expected != result) {
 
@@ -141,14 +128,11 @@ function finaliseOutcome(address sender,uint cost) public payable {
 
      assert(expected != result);
 
-    outcomeMessage =  "You have lost your stake!";
-    emit playersOutcome(cost , "You have lost your stake!");
   }
 
   players[sender].isWaiting = false;
 
   assert(result == 0 || result == 1);
-  emit playerStats(players[sender].earnings, players[sender].wins, players[sender].loss);
 
 }
 

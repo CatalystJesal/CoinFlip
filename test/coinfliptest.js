@@ -55,11 +55,11 @@ it("should ensure outcome of the flip is either 0 or 1", async function(){
 });
 
 it("should allow user to withdraw all their earnings if earnings > 0, user earnings should go to 0 after withdrawal", async function(){
-  let earnings = await instance.getPlayer.call().then(function(rest){res[0]});
+  let earnings = await instance.getPlayer.call().then(function(res){res[0]});
 
   if(earnings > 0){
     await instance.withdraw_earnings({from: accounts[0]});
-    earnings = await instance.getPlayer.call().then(function(rest){res[0]});
+    earnings = await instance.getPlayer.call().then(function(res){res[0]});
     assert(earnings == 0, "earnings didn't reset to 0. withdrawal unsuccessful")
   }
 });
