@@ -1,4 +1,4 @@
-var abi = [
+var abi =  [
   {
     "inputs": [],
     "payable": false,
@@ -35,6 +35,25 @@ var abi = [
       }
     ],
     "name": "LogNewProvableQuery",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "earnings",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawEarnings",
     "type": "event"
   },
   {

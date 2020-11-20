@@ -36,6 +36,7 @@ mapping (bytes32 => Bet) private waiting;
 
 event FlipOutcome(address player, uint outcome);
 event LogNewProvableQuery(string description);
+event WithdrawEarnings(address player, uint earnings);
 
  modifier minimumCost(uint cost) {
      require(msg.value >= spend, "Must send at least 0.1 ether to the contract");
@@ -141,12 +142,14 @@ function withdraw_earnings() public {
     require(players[msg.sender].earnings > 0, "You do not have any winning to withdraw");
     require(balance >= players[msg.sender].earnings, "Insufficient contract funds for withdrawal. Please wait till the contract has more funds available.");
 
-     msg.sender.transfer(players[msg.sender].earnings);
-     balance -= players[msg.sender].earnings;
+     uint tmp_earnings = players[msg.sender].earnings;
+     msg.sender.transfer(tmp_earnings);
+     balance -= tmp_earnings;
      players[msg.sender].earnings = 0;
 
-
      assert(balance >= players[msg.sender].earnings);
+
+     emit WithdrawEarnings(msg.sender, tmp_earnings);
 }
 
 function addLiquidity() public payable minimumCost(spend) onlyOwner returns(uint) {
