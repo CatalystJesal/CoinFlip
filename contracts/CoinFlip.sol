@@ -33,7 +33,7 @@ uint public balance;
 mapping (address => Player) private players;
 mapping (bytes32 => Bet) private waiting;
 
-
+event LatestGuess(uint guess, bytes32 queryId, bool isWaiting);
 event FlipOutcome(address player, uint outcome);
 event LogNewProvableQuery(string description);
 event WithdrawEarnings(address player, uint earnings);
@@ -63,7 +63,6 @@ function getPlayer() public view returns(uint, uint, uint, uint, uint, bool){
 
             players[waiting[_queryId].player].outcome = uint256(keccak256(abi.encodePacked(_result))) % 2;
 
-
             finaliseOutcome(_queryId);
 
             emit FlipOutcome(waiting[_queryId].player, players[waiting[_queryId].player].outcome);
@@ -81,6 +80,7 @@ function flip(uint guess) public payable minimumCost(spend)
 
 
   players[msg.sender].latestGuess = guess;
+
   balance = balance.add(msg.value);
 
   uint256 QUERY_EXECUTION_DELAY = 0; // NOTE: The datasource currently does not support delays > 0!
@@ -101,6 +101,7 @@ function flip(uint guess) public payable minimumCost(spend)
   players[msg.sender].isWaiting = true;
 
   emit LogNewProvableQuery("Provable query was sent, standing by for the answer...");
+  emit LatestGuess(guess, queryId, true);
 
 }
 
@@ -162,6 +163,12 @@ function addLiquidity() public payable minimumCost(spend) onlyOwner returns(uint
 
     return balance;
 
+}
+
+//FOR TESTING PURPOSES ONLY - ISSUES WITH ORACLE NOT RETURNING THE CALLBACK HENCE TO SAVE TIME FOR TESTING...
+function stopWaiting(address player) public onlyOwner {
+  players[player].isWaiting = false;
+  
 }
 
 

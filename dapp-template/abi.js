@@ -1,4 +1,4 @@
-var abi =  [
+var abi =   [
   {
     "inputs": [],
     "payable": false,
@@ -22,6 +22,31 @@ var abi =  [
       }
     ],
     "name": "FlipOutcome",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "guess",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "queryId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isWaiting",
+        "type": "bool"
+      }
+    ],
+    "name": "LatestGuess",
     "type": "event"
   },
   {
@@ -217,6 +242,21 @@ var abi =  [
     ],
     "payable": true,
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "stopWaiting",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
