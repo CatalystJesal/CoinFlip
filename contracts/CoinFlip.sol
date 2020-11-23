@@ -168,7 +168,7 @@ function addLiquidity() public payable minimumCost(spend) onlyOwner returns(uint
 //FOR TESTING PURPOSES ONLY - ISSUES WITH ORACLE NOT RETURNING THE CALLBACK HENCE TO SAVE TIME FOR TESTING...
 function stopWaiting(address player) public onlyOwner {
   players[player].isWaiting = false;
-  
+
 }
 
 

@@ -1,18 +1,16 @@
 var web3 = new Web3(Web3.givenProvider);
 var contractInstance;
-var players = [];
 var player = {};
 var outcomes = ['HEADS', 'TAILS'];
-var address;
-var queryid;
 
 $(document).ready(function() {
    ethereum.autoRefreshOnNetworkChange = false;
    console.log("document is ready");
     window.ethereum.enable().then(function(accounts){
-      address = accounts[0];
+
       contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {from: accounts[0]});
-      console.log(contractInstance);
+      console.log("This is the contract instance " + contractInstance.options.from);
+      console.log(contractInstance.address);
 
       loadPlayerStats().then(function(){
         setWithdrawBtnState();
@@ -36,7 +34,6 @@ $("#withdraw_btn").on("click", withdraw);
 
 
 window.ethereum.on('accountsChanged', function (accounts) {
-  address = accounts[0];
   contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {from: accounts[0]});
   console.log("We changed accounts to: " + accounts[0]);
 
@@ -114,7 +111,7 @@ function events(){
           player.latestGuess = result.returnValues.guess;
           player.isWaiting = result.returnValues.isWaiting;
           queryId = result.returnValues.queryId;
-          enableButtons(false);
+          enableButtons(player.isWaiting);
       } else {
           console.log(error);
           enableButtons(true);
@@ -122,12 +119,16 @@ function events(){
     })
 
   contractInstance.events.FlipOutcome(function(error, result){
+
+    if(result.returnValues.player == contractInstance.options.from){
+      console.log("on flip outcome the address is matching " + result.returnValues.player);
       player.outcome = result.returnValues.outcome;
       fetchOutcome();
       enableButtons(true);
       loadPlayerStats().then(function(){
         setWithdrawBtnState();
       })
+    }
   })
 
     //
@@ -198,3 +199,9 @@ async function withdraw(){
 
   });
 }
+
+
+//make event emit the queryId
+//get the waiting list with query id passed as the key
+//check if the player property address is same as the one as the address stored in player array front-end
+//if it's the same then show it to the text view else don't
