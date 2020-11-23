@@ -4,47 +4,50 @@ var player = {};
 var outcomes = ['HEADS', 'TAILS'];
 
 $(document).ready(function() {
-   ethereum.autoRefreshOnNetworkChange = false;
-   console.log("document is ready");
-    window.ethereum.enable().then(function(accounts){
+  ethereum.autoRefreshOnNetworkChange = false;
+  console.log("document is ready");
+  window.ethereum.enable().then(function(accounts) {
 
-      contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {from: accounts[0]});
-      console.log("This is the contract instance " + contractInstance.options.from);
-      console.log(contractInstance.address);
+    contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {
+      from: accounts[0]
+    });
 
-      loadPlayerStats().then(function(){
-        setWithdrawBtnState();
-        if(player.isWaiting){
-          enableButtons(false);
-        } else {
-          enableButtons(true);
-        }
-      })
+    console.log(contractInstance.address);
 
-      clearOutcomeDisplay();
-      events();
-
-
-});
-
-$("#heads_0_btn, #tails_1_btn").on("click", flip);
-$("#withdraw_btn").on("click", withdraw);
-
-});
-
-
-window.ethereum.on('accountsChanged', function (accounts) {
-  contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {from: accounts[0]});
-  console.log("We changed accounts to: " + accounts[0]);
-
-
-  loadPlayerStats().then(function(){
+    loadPlayerStats().then(function() {
       setWithdrawBtnState();
-      if(player.isWaiting){
+      if (player.isWaiting) {
         enableButtons(false);
       } else {
         enableButtons(true);
       }
+    })
+
+    clearOutcomeDisplay();
+    events();
+
+
+  });
+
+  $("#heads_0_btn, #tails_1_btn").on("click", flip);
+  $("#withdraw_btn").on("click", withdraw);
+
+});
+
+
+window.ethereum.on('accountsChanged', function(accounts) {
+  contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {
+    from: accounts[0]
+  });
+  console.log("We changed accounts to: " + accounts[0]);
+
+  loadPlayerStats().then(function() {
+    setWithdrawBtnState();
+    if (player.isWaiting) {
+      enableButtons(false);
+    } else {
+      enableButtons(true);
+    }
   })
   clearOutcomeDisplay();
   events();
@@ -52,152 +55,152 @@ window.ethereum.on('accountsChanged', function (accounts) {
 });
 
 
-function clearOutcomeDisplay(){
-    $("#outcome_display").text("????");
+function clearOutcomeDisplay() {
+  $("#outcome_display").text("????");
 }
 
 
 async function loadPlayerStats() {
 
-    await contractInstance.methods.getPlayer.call().call().then(function(res){
-      player.earnings = res[0];
-      player.wins = res[1];
-      player.loss = res[2];
-      player.latestGuess = res[3];
-      player.outcome = res[4];
-      player.isWaiting = res[5];
+  await contractInstance.methods.getPlayer.call().call().then(function(res) {
+    player.earnings = res[0];
+    player.wins = res[1];
+    player.loss = res[2];
+    player.latestGuess = res[3];
+    player.outcome = res[4];
+    player.isWaiting = res[5];
 
-      console.log(player);
+    console.log(player);
 
-      var balance = web3.utils.fromWei(player.earnings, 'ether');
-      $("#balance_output").text(balance + " ETH");
-      $("#wins_output").text(player.wins);
-      $("#loss_output").text(player.loss);
+    var balance = web3.utils.fromWei(player.earnings, 'ether');
+    $("#balance_output").text(balance + " ETH");
+    $("#wins_output").text(player.wins);
+    $("#loss_output").text(player.loss);
 
   });
 }
 
-function enableButtons(state){
+function enableButtons(state) {
 
-  if(state){
+  if (state) {
     $("#heads_0_btn").removeClass('disabled');
     $("#tails_1_btn").removeClass('disabled');
     document.getElementById("heads_0_btn").disabled = false;
     document.getElementById("tails_1_btn").disabled = false;
-} else{
+  } else {
     $("#heads_0_btn").addClass('disabled');
     $("#tails_1_btn").addClass('disabled');
     document.getElementById("heads_0_btn").disabled = true;
     document.getElementById("tails_1_btn").disabled = true;
-}
+  }
 
 }
 
-function setWithdrawBtnState(){
-  if(player.earnings == 0){
-      $("#withdraw_btn").addClass('disabled');
-      document.getElementById("withdraw_btn").disabled = true;
+function setWithdrawBtnState() {
+  if (player.earnings == 0) {
+    $("#withdraw_btn").addClass('disabled');
+    document.getElementById("withdraw_btn").disabled = true;
   } else {
-      $("#withdraw_btn").removeClass('disabled');
-      document.getElementById("withdraw_btn").disabled = false;
+    $("#withdraw_btn").removeClass('disabled');
+    document.getElementById("withdraw_btn").disabled = false;
   }
 }
 
 
-function events(){
+function events() {
 
-  contractInstance.events.LatestGuess(function(error, result){
-      if (!error) {
-          player.latestGuess = result.returnValues.guess;
-          player.isWaiting = result.returnValues.isWaiting;
-          queryId = result.returnValues.queryId;
-          enableButtons(player.isWaiting);
-      } else {
-          console.log(error);
-          enableButtons(true);
-      }
-    })
+  contractInstance.events.LatestGuess(function(error, result) {
+    if (!error) {
+      player.latestGuess = result.returnValues.guess;
+      player.isWaiting = result.returnValues.isWaiting;
+      queryId = result.returnValues.queryId;
+      enableButtons(player.isWaiting);
+    } else {
+      console.log(error);
+      enableButtons(true);
+    }
+  })
 
-  contractInstance.events.FlipOutcome(function(error, result){
+  contractInstance.events.FlipOutcome(function(error, result) {
 
-    if(result.returnValues.player == contractInstance.options.from){
+    if (result.returnValues.player == contractInstance.options.from) {
       console.log("on flip outcome the address is matching " + result.returnValues.player);
       player.outcome = result.returnValues.outcome;
       fetchOutcome();
       enableButtons(true);
-      loadPlayerStats().then(function(){
+      loadPlayerStats().then(function() {
         setWithdrawBtnState();
       })
     }
   })
 
-    //
-    contractInstance.events.WithdrawEarnings(function(error, result){
-        console.log("event withdraw: " + result.returnValues.earnings);
-        player.earnings -= result.returnValues.earnings;
-        $("#balance_output").text(0 + " ETH");
-        setWithdrawBtnState();
-    })
+
+  contractInstance.events.WithdrawEarnings(function(error, result) {
+    console.log("event withdraw: " + result.returnValues.earnings);
+    player.earnings -= result.returnValues.earnings;
+    $("#balance_output").text(0 + " ETH");
+    setWithdrawBtnState();
+  })
 
 }
 
 
 
-function flip(event){
+function flip(event) {
 
-enableButtons(false);
-var btn = $(event.target);
-var spend = $("#bet").val().trim();
-var guess = btn.val();
+  enableButtons(false);
+  var btn = $(event.target);
+  var spend = $("#bet").val().trim();
+  var guess = btn.val();
 
-var validation = new RegExp(/[0-9]+([.][0-9]+)/);
-let isDigits = validation.test(spend);
+  var validation = new RegExp(/[0-9]+([.][0-9]+)/);
+  let isDigits = validation.test(spend);
 
-if(!isDigits || spend == 0){
-alert("Your input is invalid please enter a valid number");
-enableButtons(true);
-} else {
-var config = {
-  value: web3.utils.toWei(spend, "ether")
-}
-
-$("#bet").val("");
-clearOutcomeDisplay();
-
-enableButtons(false);
-contractInstance.methods.flip(guess).send(config)
-.on("transactionHash", function(hash){
-  latestTransaction = hash;
-console.log(hash);
-})
-.catch(function(error){
-enableButtons(true);
-})
-
-}
-}
-
-
-function fetchOutcome(){
-    if(player.latestGuess == player.outcome){
-        console.log("Outcome is " + outcomes[player.outcome] +" You win!");
-        $("#outcome_display").text("It was " + outcomes[player.outcome] + " You WIN!");
-          } else {
-        console.log("Outcome is " + outcomes[player.outcome] + " You lose!");
-        $("#outcome_display").text("It was " +  outcomes[player.outcome] + " You LOSE!");
+  if (!isDigits || spend == 0) {
+    alert("Your input is invalid please enter a valid number");
+    enableButtons(true);
+  } else {
+    var config = {
+      value: web3.utils.toWei(spend, "ether")
     }
+
+    $("#bet").val("");
+    clearOutcomeDisplay();
+
+    enableButtons(false);
+    contractInstance.methods.flip(guess).send(config)
+      .on("transactionHash", function(hash) {
+        latestTransaction = hash;
+        console.log(hash);
+      })
+      .catch(function(error) {
+        enableButtons(true);
+      })
+
+  }
 }
 
-async function withdraw(){
+
+function fetchOutcome() {
+  if (player.latestGuess == player.outcome) {
+    console.log("Outcome is " + outcomes[player.outcome] + " You win!");
+    $("#outcome_display").text("It was " + outcomes[player.outcome] + " You WIN!");
+  } else {
+    console.log("Outcome is " + outcomes[player.outcome] + " You lose!");
+    $("#outcome_display").text("It was " + outcomes[player.outcome] + " You LOSE!");
+  }
+}
+
+async function withdraw() {
   $("#withdraw_btn").addClass('disabled');
   document.getElementById("withdraw_btn").disabled = true;
   await contractInstance.methods.withdraw_earnings().send()
-  .catch(err => {
-    $("#withdraw_btn").removeClass('disabled');
-    document.getElementById("withdraw_btn").disabled = false;
-    console.log(err);
+    .catch(err => {
+      $("#withdraw_btn").removeClass('disabled');
+      document.getElementById("withdraw_btn").disabled = false;
+      console.log(err);
 
-  });
+    });
 }
 
 
