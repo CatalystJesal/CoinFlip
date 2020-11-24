@@ -1,6 +1,6 @@
 var web3 = new Web3(Web3.givenProvider);
 var contractInstance;
-var contractAddress = "0x236A8Fe6427f9e2835cC353893338442C2fd7F84"
+var contractAddress = "0x81aafCf1431FBB9C6c926ee8E94a61db530a4530";
 var player = {};
 var outcomes = ['HEADS', 'TAILS'];
 

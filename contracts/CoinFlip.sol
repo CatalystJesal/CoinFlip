@@ -78,8 +78,9 @@ function flip(uint guess) public payable minimumCost(spend)
   require(balance > 0, "contract is empty. Please wait for the contract owner to provide liquidity");
   require(players[msg.sender].isWaiting == false, "please wait until your current session is complete");
 
-
+  players[msg.sender].isWaiting = true;
   players[msg.sender].latestGuess = guess;
+  emit LatestGuess(guess,msg.sender, true);
 
   balance = balance.add(msg.value);
 
@@ -98,10 +99,8 @@ function flip(uint guess) public payable minimumCost(spend)
   b.player = msg.sender;
   b.value = msg.value;
   waiting[queryId] = b;
-  players[msg.sender].isWaiting = true;
 
   emit LogNewProvableQuery("Provable query was sent, standing by for the answer...");
-  emit LatestGuess(guess,msg.sender, true);
 
 }
 
