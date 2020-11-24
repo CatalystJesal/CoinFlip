@@ -1,5 +1,6 @@
 var web3 = new Web3(Web3.givenProvider);
 var contractInstance;
+var contractAddress = "0x236A8Fe6427f9e2835cC353893338442C2fd7F84"
 var player = {};
 var outcomes = ['HEADS', 'TAILS'];
 
@@ -8,7 +9,7 @@ $(document).ready(function() {
   console.log("document is ready");
   window.ethereum.enable().then(function(accounts) {
 
-    contractInstance = new web3.eth.Contract(abi, "0x236A8Fe6427f9e2835cC353893338442C2fd7F84", {
+    contractInstance = new web3.eth.Contract(abi, contractAddress, {
       from: accounts[0]
     });
 
@@ -36,7 +37,7 @@ $(document).ready(function() {
 
 
 window.ethereum.on('accountsChanged', function(accounts) {
-  contractInstance = new web3.eth.Contract(abi, "0x236A8Fe6427f9e2835cC353893338442C2fd7F84", {
+  contractInstance = new web3.eth.Contract(abi, contractAddress, {
     from: accounts[0]
   });
   console.log("We changed accounts to: " + accounts[0]);
