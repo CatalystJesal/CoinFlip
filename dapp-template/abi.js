@@ -35,9 +35,9 @@ var abi =   [
       },
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "queryId",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
       },
       {
         "indexed": false,

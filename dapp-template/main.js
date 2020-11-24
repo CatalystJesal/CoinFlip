@@ -8,7 +8,7 @@ $(document).ready(function() {
   console.log("document is ready");
   window.ethereum.enable().then(function(accounts) {
 
-    contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {
+    contractInstance = new web3.eth.Contract(abi, "0x236A8Fe6427f9e2835cC353893338442C2fd7F84", {
       from: accounts[0]
     });
 
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 
 window.ethereum.on('accountsChanged', function(accounts) {
-  contractInstance = new web3.eth.Contract(abi, "0x5bb3850A11C6a885F2ac10277aBaacA1A5E1569f", {
+  contractInstance = new web3.eth.Contract(abi, "0x236A8Fe6427f9e2835cC353893338442C2fd7F84", {
     from: accounts[0]
   });
   console.log("We changed accounts to: " + accounts[0]);
@@ -110,11 +110,13 @@ function setWithdrawBtnState() {
 function events() {
 
   contractInstance.events.LatestGuess(function(error, result) {
-    if (!error) {
+    if (!error && contractInstance.options.from == result.returnValues.player) {
+
       player.latestGuess = result.returnValues.guess;
       player.isWaiting = result.returnValues.isWaiting;
-      queryId = result.returnValues.queryId;
-      enableButtons(player.isWaiting);
+
+      console.log("This means we are waiting = " + !player.isWaiting);
+      enableButtons(false);
     } else {
       console.log(error);
       enableButtons(true);

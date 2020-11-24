@@ -33,7 +33,7 @@ uint public balance;
 mapping (address => Player) private players;
 mapping (bytes32 => Bet) private waiting;
 
-event LatestGuess(uint guess, bytes32 queryId, bool isWaiting);
+event LatestGuess(uint guess, address player, bool isWaiting);
 event FlipOutcome(address player, uint outcome);
 event LogNewProvableQuery(string description);
 event WithdrawEarnings(address player, uint earnings);
@@ -101,7 +101,7 @@ function flip(uint guess) public payable minimumCost(spend)
   players[msg.sender].isWaiting = true;
 
   emit LogNewProvableQuery("Provable query was sent, standing by for the answer...");
-  emit LatestGuess(guess, queryId, true);
+  emit LatestGuess(guess,msg.sender, true);
 
 }
 
