@@ -32,7 +32,6 @@ $(document).ready(function() {
 
   $("#heads_0_btn, #tails_1_btn").on("click", flip);
   $("#withdraw_btn").on("click", withdraw);
-
 });
 
 
