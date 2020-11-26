@@ -51,7 +51,6 @@ window.ethereum.on('accountsChanged', function(accounts) {
     }
   })
   clearOutcomeDisplay();
-  events();
 
 });
 
