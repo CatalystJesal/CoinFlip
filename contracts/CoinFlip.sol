@@ -61,7 +61,7 @@ function getPlayer() public view returns(uint, uint, uint, uint, uint, bool){
             players[waiting[_queryId].player].isWaiting = false;
         } else {
 
-            players[waiting[_queryId].player].outcome = uint256(keccak256(abi.encodePacked(_result))) % 2;
+            players[waiting[_queryId].player].outcome = SafeMath.mod(uint256(keccak256(abi.encodePacked(_result))), 2);
 
             finaliseOutcome(_queryId);
 
@@ -144,7 +144,7 @@ function withdraw_earnings() public {
 
      uint tmp_earnings = players[msg.sender].earnings;
      msg.sender.transfer(tmp_earnings);
-     balance -= tmp_earnings;
+     balance = SafeMath.sub(balance, tmp_earnings);
      players[msg.sender].earnings = 0;
 
      assert(balance >= players[msg.sender].earnings);
@@ -156,7 +156,7 @@ function addLiquidity() public payable minimumCost(spend) onlyOwner returns(uint
 
     uint old_balance = balance;
 
-    balance += msg.value;
+    balance = SafeMath.add(balance,msg.value);
 
     assert(balance > old_balance);
 
