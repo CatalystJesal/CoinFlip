@@ -82,7 +82,6 @@ function flip(uint guess) public payable minimumCost(spend)
   players[msg.sender].latestGuess = guess;
   emit LatestGuess(guess,msg.sender, true);
 
-  balance = balance.add(msg.value);
 
   uint256 QUERY_EXECUTION_DELAY = 0; // NOTE: The datasource currently does not support delays > 0!
   uint256 GAS_FOR_CALLBACK = 300000;
@@ -99,6 +98,9 @@ function flip(uint guess) public payable minimumCost(spend)
   b.player = msg.sender;
   b.value = msg.value;
   waiting[queryId] = b;
+
+  balance = balance.add(msg.value);
+
 
   emit LogNewProvableQuery("Provable query was sent, standing by for the answer...");
 
@@ -143,9 +145,10 @@ function withdraw_earnings() public {
     require(balance >= players[msg.sender].earnings, "Insufficient contract funds for withdrawal. Please wait till the contract has more funds available.");
 
      uint tmp_earnings = players[msg.sender].earnings;
-     msg.sender.transfer(tmp_earnings);
-     balance = SafeMath.sub(balance, tmp_earnings);
      players[msg.sender].earnings = 0;
+     balance = SafeMath.sub(balance, tmp_earnings);
+     msg.sender.transfer(tmp_earnings);
+
 
      assert(balance >= players[msg.sender].earnings);
 
