@@ -63,6 +63,14 @@ function App() {
       window.ethereum.on("chainChanged", (chainId) => {
         console.log("Please use Ropsten testnet");
         window.ethereum.autoRefreshOnNetworkChange = false;
+        dispatch(resetState());
+        window.ethereum.enable().then((accounts) => {
+          contractInstance = new web3.eth.Contract(abi, contractAddress, {
+            from: accounts[0],
+          });
+
+          fetchPlayerData();
+        });
       });
     });
   }, []);
