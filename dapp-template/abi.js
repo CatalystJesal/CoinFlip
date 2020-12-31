@@ -1,96 +1,268 @@
-var abi =  [
+var abi = [
   {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    inputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
+        indexed: false,
+        internalType: "address",
+        name: "player",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "outcome",
-        "type": "string"
-      }
-    ],
-    "name": "stakeOutcome",
-    "type": "event"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "balance",
-    "outputs": [
+        indexed: false,
+        internalType: "uint256",
+        name: "outcome",
+        type: "uint256",
+      },
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "won",
+        type: "uint256",
+      },
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    name: "FlipOutcome",
+    type: "event",
   },
   {
-    "constant": false,
-    "inputs": [],
-    "name": "destroy",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "outcome",
-    "outputs": [
+    anonymous: false,
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "guess",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "isWaiting",
+        type: "bool",
+      },
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    name: "LatestGuess",
+    type: "event",
   },
   {
-    "constant": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "number",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
     ],
-    "name": "guess",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
+    name: "LogNewProvableQuery",
+    type: "event",
   },
   {
-    "constant": false,
-    "inputs": [],
-    "name": "addLiquidity",
-    "outputs": [
+    anonymous: false,
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "earnings",
+        type: "uint256",
+      },
     ],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  }
-]
+    name: "WithdrawEarnings",
+    type: "event",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "balance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [],
+    name: "destroy",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "getPlayer",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_myid",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "_result",
+        type: "string",
+      },
+    ],
+    name: "__callback",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_queryId",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "_result",
+        type: "string",
+      },
+      {
+        internalType: "bytes",
+        name: "_proof",
+        type: "bytes",
+      },
+    ],
+    name: "__callback",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "guess",
+        type: "uint256",
+      },
+    ],
+    name: "flip",
+    outputs: [],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_queryId",
+        type: "bytes32",
+      },
+    ],
+    name: "finaliseOutcome",
+    outputs: [],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [],
+    name: "withdraw_earnings",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [],
+    name: "addLiquidity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: true,
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+    ],
+    name: "stopWaiting",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
